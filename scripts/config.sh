@@ -28,6 +28,6 @@ log INFO "Writing configuration" "$CONFIG_FILE"
 
 echo -n "$DEBUG"
 cat <<EOF | tee "$CONFIG_FILE"
-DLT_BACKUP_BORG_REPO="$DLT_BACKUP_BORG_REPO"
+DLT_BACKUP_BORG_REPO=$DLT_BACKUP_BORG_REPO
 EOF
 echo -n "$RESET"
