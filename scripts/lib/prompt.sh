@@ -7,7 +7,7 @@ LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 prompt() {
     if [ "$#" -lt 2 ]; then
         echo "prompt: must provide message and target environment variable"
-        return 1
+        return 2
     fi
 
     msg="$(echo "$1" | sed -E "s/'([^']*)'/${VALUE}\1${PROMPT}/g")"

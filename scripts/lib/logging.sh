@@ -27,7 +27,7 @@ log() {
             ;;
         *)
             echo "log: invalid level: $level"
-            return 1
+            return 2
     esac
 
     msg="$1"

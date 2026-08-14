@@ -18,7 +18,7 @@ if [ -e "$CONFIG_FILE" ]; then
     prompt "Overwrite '$CONFIG_FILE'? [yN]" overwrite
     if [ "${overwrite?}" != "y" ]; then
         log ERROR "Configuration file overwrite denied by user"
-        exit 2
+        exit 1
     fi
 fi
 
@@ -28,6 +28,6 @@ log INFO "Writing configuration" "$CONFIG_FILE"
 
 echo -n "$DEBUG"
 cat <<EOF | tee "$CONFIG_FILE"
-DLT_BACKUP_BORG_REPO=$DLT_BACKUP_BORG_REPO
+DLT_BACKUP_BORG_REPO="$DLT_BACKUP_BORG_REPO"
 EOF
 echo -n "$RESET"
