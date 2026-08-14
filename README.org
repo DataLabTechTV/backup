@@ -1,2 +1,2 @@
-* dlt-backup
+* backup
 Backup scripts and configs to help setup BorgBackup
