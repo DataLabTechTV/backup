@@ -17,3 +17,48 @@ And, if you want to install/uninstall as a systemd user service:
 just install
 just uninstall
 #+end_src
+
+** Details
+*** Customizing the Backup Period
+The systemd user service runs on a timer that is set to every 30 minutes. You can change this by editing =systemd/user/dlt-backup.timer= directly before running ~just install~.
+
+*** Toaster Notification Options
+By default, =systemd/user/dlt-backup.server= will run ~dlt-backup --notify --notify-once-daily~~. You can either disable notifications completely, by removing both arguments, or enable notifications for all runs by removing =--notify-once-daily=. This option exists so that you get notified once per day, on the first successful run, so you can keep track of the backup service. For 30 minute periods, it would be annoying to get notified every time, so we included this option. You can edit these out from the source and run ~just install~ again (as many times as you need).
+
+*** Summmary of Operations
+This is essentially a glorified wrapper (a porcelain?) around =borg=, so that we can essentially run the following commands.
+
+We initialize a borg repository, if it doesn't exist and it's safe to do so (no encryption by default):
+
+#+begin_src bash
+borg init --encryption=none "$borg_repo"
+#+end_src
+
+We create a backup archive for the configured source directories (here =src_dirs=):
+
+#+begin_src bash
+borg create \
+    --verbose \
+    --list \
+    "$borg_repo::{now}" \
+    "${src_dirs[@]}"
+#+end_src
+
+We remove old backups according to the configured retention policy. Default is to keep all backups for the day (since there is no file duplication, space is not an issue). We also keep a backup per day for the last week, a backup per week for the last month, and a backup per month for the last year.
+
+#+begin_src bash
+borg prune \
+    --list \
+    --stats \
+    --keep-within="${keep_within?}" \
+    --keep-daily="${keep_daily?}" \
+    --keep-weekly="${keep_weekly?}" \
+    --keep-monthly="${keep_monthly?}" \
+    "$borg_repo"
+#+end_src
+
+Finally, once pruning is run, we compact the repo to free up space:
+
+#+begin_src bash
+borg compact "$borg_repo"
+#+end_src
