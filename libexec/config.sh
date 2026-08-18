@@ -26,6 +26,10 @@ if [ -e "$config_file" ] || [ -e "$sources_file" ]; then
 fi
 
 prompt "Borg repository directory" borg_repo
+prompt "Keep within [default: retain all backups from the past 24h]" keep_within 1d
+prompt "Keep daily [default: retain daily backups for the past week]" keep_daily 7
+prompt "Keep weekly [default: retain weekly backups for the past month]" keep_weekly 4
+prompt "Keep monthly [default: retain monthly backups for the past year]" keep_monthly 12
 
 src_dirs=()
 while true; do
@@ -47,6 +51,10 @@ info "Writing configuration" "$config_file"
 printf '%b' "$cdebug"
 cat <<EOF | tee "$config_file"
 borg_repo=$borg_repo
+keep_within=$keep_within
+keep_daily=$keep_daily
+keep_weekly=$keep_weekly
+keep_monthly=$keep_monthly
 EOF
 printf '%b' "$creset"
 
