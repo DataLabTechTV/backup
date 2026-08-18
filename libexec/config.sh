@@ -5,10 +5,10 @@ set -euo pipefail
 _config_script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly _CONFIG_SCRIPT_DIR
 
-. "$_config_script_dir/lib/logging.sh"
-. "$_config_script_dir/lib/colors.sh"
-. "$_config_script_dir/lib/prompt.sh"
-. "$_config_script_dir/lib/constants.sh"
+. "$_config_script_dir/../lib/logging.sh"
+. "$_config_script_dir/../lib/colors.sh"
+. "$_config_script_dir/../lib/prompt.sh"
+. "$_config_script_dir/../lib/constants.sh"
 
 info "Configuration started" "$(date --iso-8601=seconds)"
 

@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+_bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly _bin_dir
+
+if [ -f "$_bin_dir/../libexec/backup.sh" ]; then
+    app_dir="$(dirname "$_bin_dir")"
+else
+    app_dir="${XDG_DATA_HOME:-$HOME/.local/share}/dlt/backup"
+fi
+
+libexec_dir="$app_dir/libexec"
+
+usage() {
+    local prog="${0##*/}"
+    echo "Usage: $prog [OPTIONS]"
+    echo "       $prog config"
+    echo
+    echo "Backup configured source directories."
+    echo
+    echo "Commands:"
+    echo "  config                  Manage backup configuration"
+    echo
+    echo "Options:"
+    echo "  -h, --help              Show this help message"
+    echo "  -n, --notify            Show a toaster notification when complete"
+    echo "  -o, --notify-once-daily Only show the first toaster notification of the day"
+    exit 2
+}
+
+case ${1:-} in
+    --help|-h)
+        usage
+        ;;
+    config)
+        shift
+        exec "$libexec_dir/config.sh" "$@"
+        ;;
+    *)
+        exec "$libexec_dir/backup.sh" "$@"
+        ;;
+esac

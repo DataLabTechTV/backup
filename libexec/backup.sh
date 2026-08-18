@@ -5,10 +5,10 @@ set -euo pipefail
 _backup_script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly _backup_script_dir
 
-. "$_backup_script_dir/lib/logging.sh"
-. "$_backup_script_dir/lib/colors.sh"
-. "$_backup_script_dir/lib/prompt.sh"
-. "$_backup_script_dir/lib/constants.sh"
+. "$_backup_script_dir/../lib/logging.sh"
+. "$_backup_script_dir/../lib/colors.sh"
+. "$_backup_script_dir/../lib/prompt.sh"
+. "$_backup_script_dir/../lib/constants.sh"
 
 check_config() {
     if [ -z "$config_file" ]; then

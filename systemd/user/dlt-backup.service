@@ -3,4 +3,5 @@ Description=Run DLT backup
 
 [Service]
 Type=oneshot
-ExecStart=%h/.local/share/dlt/backup/backup.sh --notify
+ExecSearchPath=%h/.local/bin:/usr/local/bin:/usr/bin
+ExecStart=dlt-backup --notify --notify-once-daily
