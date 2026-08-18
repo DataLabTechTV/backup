@@ -64,12 +64,21 @@ load_sources() {
     done
 }
 
+if [ "$#" -ge 1 ]; then
+    case "$1" in
+        --notify|-n)
+            notify=1
+            shift
+            ;;
+    esac
+fi
+
 info "Backup started" "$(date --iso-8601=seconds)"
 
 load_config
 check_config borg_repo
 
-if [ ! -d "$borg_repo" ]; then
+if [ ! -d "${borg_repo?}" ]; then
     error "Borg repository not a directory" "$borg_repo"
     exit 1
 fi
@@ -94,11 +103,19 @@ fi
 
 debug "Source directories" "${src_dirs[@]}"
 
+tmpfile=$(mktemp)
+trap 'rm -f "$tmpfile"' EXIT
+
 borg create \
     --verbose \
     --list \
     "$borg_repo::{now}" \
-    "${src_dirs[@]}"
+    "${src_dirs[@]}" 2>&1 |
+    tee "$tmpfile"
+
+stat_date="$(awk '/^Creating archive at/ { match($0, "::([^\"]+)\"", m); print m[1] }' "$tmpfile" || true)"
+stat_added="$(grep -c '^A ' "$tmpfile" || true)"
+stat_modified="$(grep -c '^M ' "$tmpfile" || true)"
 
 info "Pruning old backups"
 borg prune \
@@ -117,3 +134,11 @@ info "Showing borg repository information"
 borg info "$borg_repo"
 
 info "Backup done" "$(date --iso-8601=seconds)"
+
+if [ -n "${notify:-}" ]; then
+    notify-send \
+        --icon "backup" \
+        --app-name "DLT Backup" \
+        "Borg archive created" \
+        "$stat_date<br>$stat_added added, $stat_modified modified"
+fi
