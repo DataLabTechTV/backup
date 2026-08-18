@@ -1,0 +1,6 @@
+[Unit]
+Description=Run DLT backup
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/share/dlt/backup/scripts/backup.sh --notify
