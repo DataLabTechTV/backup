@@ -1,55 +1,83 @@
 #!/usr/bin/env bash
 
-LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ "${_lib_logging_loaded:-0}" = "1" ]; then
+    return 0
+fi
 
-. "$LIB_DIR/colors.sh"
+_lib_logging_loaded=1
+
+_lib_logging_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly _lib_logging_dir
+
+. "$_lib_logging_dir/colors.sh"
 
 log() {
-    level=$1
+    local level=$1
     shift
 
-    case $level in
+    local color prefix
+
+    case "$level" in
         INFO)
-            color=$INFO
-            prefix=I
+            color="$cinfo"
+            prefix='I'
             ;;
         WARN)
-            color=$WARN
-            prefix=W
+            color="$cwarn"
+            prefix='W'
             ;;
         ERROR)
-            color=$ERROR
-            prefix=E
+            color="$cerror"
+            prefix='E'
             ;;
         DEBUG)
-            color=$DEBUG
-            prefix=D
+            color="$cdebug"
+            prefix='D'
             ;;
         *)
-            echo "log: invalid level: $level"
+            printf 'log: invalid level: %s\n' "$level" >&2
             return 2
     esac
 
-    msg="$1"
+    local msg="$1"
     shift
 
-    value=
+    local value=
     if [ "$#" -ge 1 ]; then
-        value=": ${VALUE}$1"
-        shift
+        value=": ${cvalue}$*"
     fi
 
-    printf "${color}$prefix: $msg${value}${RESET}\n" "$@" >&2
+    printf '%b%s: %s%b%s%b\n' \
+        "$color" "$prefix" "$msg" "$creset" \
+        "$value" "$creset" \
+        >&2
+}
+
+info() {
+    log INFO "$@"
+}
+
+warn() {
+    log WARN "$@"
+}
+
+error() {
+    log ERROR "$@"
+}
+
+debug() {
+    [ "${DEBUG:-0}" = "1" ] || return 0
+    log DEBUG "$@"
 }
 
 log_demo() {
-    log INFO "information message"
-    log WARN "warning message"
-    log ERROR "error message"
-    log DEBUG "debug message"
+    info "information message"
+    warn "warning message"
+    error "error message"
+    debug "debug message"
 
-    log INFO "information message" "value"
-    log WARN "warning message" "value"
-    log ERROR "error message" "value"
-    log DEBUG "debug message" "value"
+    info "information message" "some value"
+    warn "warning message" "some value"
+    error "error message" "some value"
+    debug "debug message" "some value"
 }

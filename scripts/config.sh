@@ -2,20 +2,21 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+_config_script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly _CONFIG_SCRIPT_DIR
 
-. "$SCRIPT_DIR/lib/logging.sh"
-. "$SCRIPT_DIR/lib/colors.sh"
-. "$SCRIPT_DIR/lib/prompt.sh"
-. "$SCRIPT_DIR/lib/constants.sh"
+. "$_config_script_dir/lib/logging.sh"
+. "$_config_script_dir/lib/colors.sh"
+. "$_config_script_dir/lib/prompt.sh"
+. "$_config_script_dir/lib/constants.sh"
 
-if [ ! -e "$CONFIG_DIR" ]; then
-    log INFO "Creating configuration directory" "$CONFIG_DIR"
-    mkdir -vp "$CONFIG_DIR"
+if [ ! -e "$config_dir" ]; then
+    log INFO "Creating configuration directory" "$config_dir"
+    mkdir -vp "$config_dir"
 fi
 
-if [ -e "$CONFIG_FILE" ]; then
-    prompt "Overwrite '$CONFIG_FILE'? [yN]" overwrite
+if [ -e "$config_file" ]; then
+    prompt "Overwrite '$config_file'? [yN]" overwrite
     if [ "${overwrite?}" != "y" ]; then
         log ERROR "Configuration file overwrite denied by user"
         exit 1
@@ -24,10 +25,10 @@ fi
 
 prompt "Borg repository directory" DLT_BACKUP_BORG_REPO
 
-log INFO "Writing configuration" "$CONFIG_FILE"
+log INFO "Writing configuration" "$config_file"
 
-echo -n "$DEBUG"
-cat <<EOF | tee "$CONFIG_FILE"
+echo -n "$cdebug"
+cat <<EOF | tee "$config_file"
 DLT_BACKUP_BORG_REPO=$DLT_BACKUP_BORG_REPO
 EOF
-echo -n "$RESET"
+echo -n "$creset"

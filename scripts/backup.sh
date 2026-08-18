@@ -2,21 +2,22 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+_backup_script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly _backup_script_dir
 
-. "$SCRIPT_DIR/lib/logging.sh"
-. "$SCRIPT_DIR/lib/colors.sh"
-. "$SCRIPT_DIR/lib/prompt.sh"
-. "$SCRIPT_DIR/lib/constants.sh"
+. "$_backup_script_dir/lib/logging.sh"
+. "$_backup_script_dir/lib/colors.sh"
+. "$_backup_script_dir/lib/prompt.sh"
+. "$_backup_script_dir/lib/constants.sh"
 
 check_config() {
-    if [ -z "$CONFIG_FILE" ]; then
+    if [ -z "$config_file" ]; then
         log ERROR "Configuration file not set"
         return 1
     fi
 
-    if [ ! -r "$CONFIG_FILE" ]; then
-        log ERROR "Configuration file not readable" "$CONFIG_FILE"
+    if [ ! -r "$config_file" ]; then
+        log ERROR "Configuration file not readable" "$config_file"
         return 1
     fi
 
@@ -37,7 +38,7 @@ load_config() {
 
     set -a
     # shellcheck source=/dev/null
-    source "$CONFIG_FILE"
+    source "$config_file"
     set +a
 }
 

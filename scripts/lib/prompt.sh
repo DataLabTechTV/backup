@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 
-LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ "${_lib_prompt_loaded:-0}" = 1 ]; then
+    return 0
+fi
 
-. "$LIB_DIR/colors.sh"
+_lib_prompt_loaded=1
+
+_lib_prompt_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly _lib_prompt_dir
+
+. "$_lib_prompt_dir/colors.sh"
 
 prompt() {
     if [ "$#" -lt 2 ]; then
@@ -10,11 +17,11 @@ prompt() {
         return 2
     fi
 
-    msg="$(echo "$1" | sed -E "s/'([^']*)'/${VALUE}\1${PROMPT}/g")"
+    msg="$(echo "$1" | sed -E "s/'([^']*)'/${cvalue}\1${cprompt}/g")"
     var="$2"
 
-    read -e -r -p "${PROMPT}${msg}: $RESET" "${var?}"
-    printf '%s' "$RESET"
+    read -e -r -p "${cprompt}${msg}: $creset" "${var?}"
+    printf '%s' "$creset"
 }
 
 prompt_demo() {
