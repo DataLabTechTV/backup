@@ -64,14 +64,18 @@ load_sources() {
     done
 }
 
-if [ "$#" -ge 1 ]; then
+while [ "$#" -gt 0 ]; do
     case "$1" in
         --notify|-n)
             notify=1
-            shift
+            ;;
+        --notify-once-daily|-o)
+            notify_once_daily=1
             ;;
     esac
-fi
+
+    shift
+done
 
 info "Backup started" "$(date --iso-8601=seconds)"
 
@@ -133,12 +137,27 @@ borg compact "$borg_repo"
 info "Showing borg repository information"
 borg info "$borg_repo"
 
-info "Backup done" "$(date --iso-8601=seconds)"
-
 if [ -n "${notify:-}" ]; then
-    notify-send \
-        --icon "backup" \
-        --app-name "DLT Backup" \
-        "Borg archive created" \
-        "$stat_date<br>$stat_added added, $stat_modified modified"
+    last_notification_file="$state_dir/notifications"
+    mkdir -p "$state_dir"
+
+    today="$(date --iso-8601)"
+    show=1
+
+    if [ -n "${notify_once_daily:-}" ] && [ -e "$last_notification_file" ]; then
+        last_date="$(cat "$last_notification_file")"
+        [ "$last_date" = "$today" ] && show=0
+    fi
+
+    if [ "$show" -eq 1 ]; then
+        notify-send \
+            --icon "backup" \
+            --app-name "DLT Backup" \
+            "Borg archive created" \
+            "$stat_date<br>$stat_added added, $stat_modified modified"
+
+        echo "$today" >"$last_notification_file"
+    fi
 fi
+
+info "Backup done" "$(date --iso-8601=seconds)"

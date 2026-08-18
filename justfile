@@ -31,24 +31,27 @@ install: check
     #!/usr/bin/env bash
     set -euxo pipefail
 
-    data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/dlt/backup"
+    source ./scripts/lib/constants.sh
 
-    install -d "$data_dir/scripts" "$data_dir/scripts/lib"
-    install -Dm755 ./scripts/*.sh "$data_dir/scripts/"
-    install -Dm644 ./scripts/lib/*.sh "$data_dir/scripts/lib/"
-
-    systemd_user_dir="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
+    install -d "$data_dir" "$data_dir/lib"
+    install -Dm755 ./scripts/*.sh "$data_dir/"
+    install -Dm644 ./scripts/lib/*.sh "$data_dir/lib/"
 
     install -Dm644 ./systemd/user/dlt-backup.service "$systemd_user_dir/dlt-backup.service"
     install -Dm644 ./systemd/user/dlt-backup.timer "$systemd_user_dir/dlt-backup.timer"
-
     systemctl --user daemon-reload
     systemctl --user enable --now dlt-backup.timer
 
 # Uninstall backup scripts and systemd user units
 [group('manage')]
 uninstall:
+    #!/usr/bin/env bash
+    set -euxo pipefail
+
+    source ./scripts/lib/constants.sh
+
     systemctl --user disable --now dlt-backup.timer
-    rm -fv "${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"/dlt-backup.*
+    rm -fv "$systemd_user_dir"/dlt-backup.*
     systemctl --user daemon-reload
-    rm -rfv "${XDG_DATA_HOME:-$HOME/.local/share}/dlt/backup"
+
+    rm -rfv "$data_dir"
