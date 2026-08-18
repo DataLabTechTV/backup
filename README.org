@@ -1,2 +1,19 @@
 * backup
 Backup scripts and configs to help setup BorgBackup
+
+** Requirements
++ [[https://just.systems/][just]]
++ [[https://www.borgbackup.org/][borg]]
+
+** Quickstart
+#+begin_src bash
+just config
+just backup
+#+end_src
+
+And, if you want to install/uninstall as a systemd user service:
+
+#+begin_src bash
+just install
+just uninstall
+#+end_src
