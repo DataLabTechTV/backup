@@ -17,17 +17,32 @@ prompt() {
         return 2
     fi
 
-    msg="$(echo "$1" | sed -E "s/'([^']*)'/${cvalue}\1${cprompt}/g")"
-    var="$2"
+    local msg _input_var def
 
-    read -e -r -p "${cprompt}${msg}: $creset" "${var?}"
+    msg="$(echo "$1" | sed -E "s/'([^']*)'/${cvalue}\1${cprompt}/g")"
+    _input_var="$2"
+
+    extra_args=()
+    if [ "$#" -ge 3 ]; then
+        def="$3"
+        extra_args+=( -i "$def" )
+    fi
+
+    read -e -r "${extra_args[@]}" -p "${cprompt}${msg}: $creset" "${_input_var?}"
     printf '%s' "$creset"
+
+    if [ "$#" -ge 3 ] && [ -z "${!_input_var}" ]; then
+        printf -v "$_input_var" '%s' "$def"
+    fi
 }
 
 prompt_demo() {
-    prompt "Enter" var
-    echo "ANS: $var"
+    prompt "Enter" val
+    echo "ANS: $val"
 
-    prompt "Check file '/tmp/test' or 'blah'? [yN]" var
-    echo "ANS: $var"
+    prompt "Enter default" val 1d
+    echo "ANS: $val"
+
+    prompt "Check file '/tmp/test' or 'blah'? [yN]" val
+    echo "ANS: $val"
 }
