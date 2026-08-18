@@ -28,8 +28,13 @@ check_config() {
     config="$1"
 
     if [ -z "${!config:-}" ]; then
-        error "Configuration not set" "$config"
-        return 1
+        if [ "$#" -ge 2 ] && [ -n "$2" ]; then
+            warn "Using default value" "${config}=$2"
+            printf -v "$config" '%s' "$2"
+        else
+            error "Configuration not set" "$config"
+            return 1
+        fi
     fi
 
     debug "$config" "${!config:-}"
@@ -81,6 +86,10 @@ info "Backup started" "$(date --iso-8601=seconds)"
 
 load_config
 check_config borg_repo
+check_config keep_within 1d
+check_config keep_daily 7
+check_config keep_weekly 4
+check_config keep_monthly 12
 
 if [ ! -d "${borg_repo?}" ]; then
     error "Borg repository not a directory" "$borg_repo"
@@ -125,10 +134,10 @@ info "Pruning old backups"
 borg prune \
     --list \
     --stats \
-    --keep-within=1d \
-    --keep-daily=7 \
-    --keep-weekly=4 \
-    --keep-monthly=12 \
+    --keep-within="${keep_within?}" \
+    --keep-daily="${keep_daily?}" \
+    --keep-weekly="${keep_weekly?}" \
+    --keep-monthly="${keep_monthly?}" \
     "$borg_repo"
 
 info "Compacting borg repository"
