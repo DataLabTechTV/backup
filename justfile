@@ -18,6 +18,10 @@ check:
 config:
     ./scripts/config.sh
 
+# Run backup script (expects existing config)
+backup:
+    ./scripts/backup.sh
+
 # Install or reinstall backup user service
 install: check
     # ${XDG_DATA_HOME:-$HOME/.local/share}/dlt/backup
