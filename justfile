@@ -1,6 +1,6 @@
 # List all recipes
 default:
-    just -l -u
+    @just -l -u
 
 _check bin:
     #!/usr/bin/env bash
@@ -24,6 +24,11 @@ config:
 [group('run')]
 backup *args:
     ./bin/dlt-backup {{ args }}
+
+# Exports the latest backup as a target tar.gz file
+[group('run')]
+snapshot target_dir="." prefix="snapshot-":
+    ./bin/dlt-backup snapshot {{ target_dir }} {{ prefix }}
 
 # Install backup scripts and systemd user units
 [group('manage')]

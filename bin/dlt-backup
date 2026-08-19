@@ -17,11 +17,17 @@ usage() {
     local prog="${0##*/}"
     echo "Usage: $prog [OPTIONS]"
     echo "       $prog config"
+    echo "       $prog snapshot TARGET_DIR PREFIX"
     echo
     echo "Backup configured source directories."
     echo
     echo "Commands:"
     echo "  config                  Manage backup configuration"
+    echo "  snapshot                Produce a snapshot of the latest backup"
+    echo
+    echo "Arguments:"
+    echo "  TARGET_DIR              Target directory used to store the snapshot"
+    echo "  PREFIX                  Filename prefix, to be followed by the archive name"
     echo
     echo "Options:"
     echo "  -h, --help              Show this help message"
@@ -37,6 +43,10 @@ case ${1:-} in
     config)
         shift
         exec "$libexec_dir/config.sh" "$@"
+        ;;
+    snapshot)
+        shift
+        exec "$libexec_dir/snapshot.sh" "$@"
         ;;
     *)
         exec "$libexec_dir/backup.sh" "$@"
