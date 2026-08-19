@@ -27,7 +27,7 @@ backup *args:
 
 # Exports the latest backup as a target tar.gz file
 [group('run')]
-snapshot target_dir="." prefix="snapshot-":
+snapshot target_dir="./output" prefix="snapshot-":
     ./bin/dlt-backup snapshot {{ target_dir }} {{ prefix }}
 
 # Install backup scripts and systemd user units
