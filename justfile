@@ -30,6 +30,16 @@ backup *args:
 snapshot target_dir="./output" prefix="snapshot-":
     ./bin/dlt-backup snapshot {{ target_dir }} {{ prefix }}
 
+# List backup archives
+[group('run')]
+list:
+    ./bin/dlt-backup list
+
+# Show repository information
+[group('run')]
+info:
+    ./bin/dlt-backup info
+
 # Install backup scripts and systemd user units
 [group('manage')]
 install: check
