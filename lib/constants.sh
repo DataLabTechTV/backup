@@ -15,6 +15,7 @@ state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/dlt/backup"
 
 config_file="$config_dir/config"
 sources_file="$config_dir/sources"
+last_run_file="$state_dir/last_run"
 
 systemd_user_dir="$config_root/systemd/user"
 

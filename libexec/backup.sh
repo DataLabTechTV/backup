@@ -147,14 +147,15 @@ info "Showing borg repository information"
 borg info "$borg_repo"
 
 if [ -n "${notify:-}" ]; then
-    last_notification_file="$state_dir/notifications"
     mkdir -p "$state_dir"
 
-    today="$(date --iso-8601)"
+    now="$(date --iso-8601=seconds)"
+    today="$(echo "$now" | cut -dT -f1)"
     show=1
 
-    if [ -n "${notify_once_daily:-}" ] && [ -e "$last_notification_file" ]; then
-        last_date="$(cat "$last_notification_file")"
+    if [ -n "${notify_once_daily:-}" ] && [ -e "$last_run_file" ]; then
+        last_run="$(cat "$last_run_file")"
+        last_date="$(echo "$last_run" | cut -dT -f1)"
         [ "$last_date" = "$today" ] && show=0
     fi
 
@@ -165,8 +166,9 @@ if [ -n "${notify:-}" ]; then
             "Borg archive created" \
             "$stat_date<br>$stat_added added, $stat_modified modified"
 
-        echo "$today" >"$last_notification_file"
     fi
+
+    echo "$now" >"$last_run_file"
 fi
 
 info "Backup done" "$(date --iso-8601=seconds)"
