@@ -3,7 +3,7 @@
 set -euo pipefail
 
 _config_script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly _CONFIG_SCRIPT_DIR
+readonly _config_script_dir
 
 . "$_config_script_dir/../lib/logging.sh"
 . "$_config_script_dir/../lib/colors.sh"
