@@ -23,7 +23,7 @@ just uninstall
 The systemd user service runs on a timer that is set to every 30 minutes. You can change this by editing =systemd/user/dlt-backup.timer= directly before running ~just install~.
 
 *** Toaster Notification Options
-By default, =systemd/user/dlt-backup.server= will run ~dlt-backup --notify --notify-once-daily~~. You can either disable notifications completely, by removing both arguments, or enable notifications for all runs by removing =--notify-once-daily=. This option exists so that you get notified once per day, on the first successful run, so you can keep track of the backup service. For 30 minute periods, it would be annoying to get notified every time, so we included this option. You can edit these out from the source and run ~just install~ again (as many times as you need).
+By default, =systemd/user/dlt-backup.service= will run ~dlt-backup --notify --notify-once-daily~~. You can either disable notifications completely, by removing both arguments, or enable notifications for all runs by removing =--notify-once-daily=. This option exists so that you get notified once per day, on the first successful run, so you can keep track of the backup service. For 30 minute periods, it would be annoying to get notified every time, so we included this option. You can edit these out from the source and run ~just install~ again (as many times as you need).
 
 *** Summmary of Operations
 This is essentially a glorified wrapper (a porcelain?) around =borg=, so that we can essentially run the following commands.
